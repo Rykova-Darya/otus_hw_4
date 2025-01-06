@@ -18,8 +18,18 @@ class PriorityQueue
 
     public function enqueue($priority, $item)
     {
-        $this->queue[$this->count] = $item;
-        $this->priorities[$this->count] = $priority;
+        $position = $this->count;
+
+        //Находим правильную позицию для вставки элемента
+        while ($position > 0 && $this->priorities[$position - 1] > $priority) {
+            $this->queue[$position] = $this->queue[$position - 1];
+            $this->priorities[$position] = $this->priorities[$position - 1];
+            $position--;
+        }
+
+        //Вставляем элемент в найденную позицию
+        $this->queue[$position] = $item;
+        $this->priorities[$position] = $priority;
         $this->count++;
     }
 
@@ -43,10 +53,10 @@ class PriorityQueue
 
     public function dequeue()
     {
-        $this->sort();
         $item = $this->queue[0];
         for ($i = 1; $i < $this->count; $i++) {
             $this->queue[$i - 1] = $this->queue[$i];
+            $this->priorities[$i -1] = $this->priorities[$i];
         }
         $this->count--;
         return $item;
